@@ -1,0 +1,85 @@
+# 📊 EXDATABASE – SQLite Practice  
+
+هذا المشروع هو Notebook تفاعلي (`EXDATABASE.ipynb`) لتعلّم وممارسة أساسيات **SQL** و **Data Cleaning** باستخدام قاعدة بيانات مصغرة في SQLite.  
+
+---
+
+## 🗂️ محتويات قاعدة البيانات  
+
+### الجداول
+- **Customers**  
+  `CustomerId (PK), Name, Email, Country, Age, SignupDate`  
+
+- **Products**  
+  `ProductId (PK), ProductName, Category, Price, Stock`  
+
+- **Orders**  
+  `OrderId (PK), CustomerId (FK), OrderDate, TotalAmount`  
+
+- **OrderDetails**  
+  `OrderDetailId (PK), OrderId (FK), ProductId (FK), Quantity`  
+
+---
+
+## 📥 خطوات الاستخدام  
+
+1. افتح الـ notebook:  
+   ```bash
+   jupyter notebook EXDATABASE.ipynb
+   ```  
+
+2. نفّذ الخلايا بالترتيب لإنشاء الجداول وإضافة البيانات.  
+
+---
+
+## 🔍 أمثلة Queries  
+
+### 1. عرض جميع العملاء  
+```sql
+SELECT * FROM Customers;
+```
+
+### 2. العملاء بدون بريد إلكتروني  
+```sql
+SELECT * FROM Customers
+WHERE Email IS NULL;
+```
+
+### 3. عدد العملاء في كل دولة  
+```sql
+SELECT Country, COUNT(*) AS TotalCustomers
+FROM Customers
+GROUP BY Country;
+```
+
+### 4. أكبر عميل إنفاقاً في كل دولة  
+```sql
+WITH CustomerSpending AS (
+    SELECT c.CustomerID, c.Name, c.Country,
+           SUM(o.TotalAmount) AS TotalSpent
+    FROM Customers c
+    JOIN Orders o ON c.CustomerID = o.CustomerID
+    GROUP BY c.CustomerID, c.Name, c.Country
+)
+SELECT *
+FROM CustomerSpending cs
+WHERE TotalSpent = (
+    SELECT MAX(TotalSpent)
+    FROM CustomerSpending
+    WHERE Country = cs.Country
+);
+```
+
+---
+
+## 🧹 مهام Data Cleaning  
+
+- إزالة العملاء الذين عمرهم < 0.  
+- تحديث البريد الإلكتروني المفقود إلى `unknown@example.com`.  
+- حذف العملاء المكررين مع الاحتفاظ بأقدم تاريخ تسجيل.  
+
+---
+
+## 🎯 الهدف  
+
+المشروع معمول كـ **تدريب على SQL + Data Cleaning** للي عايز يبدأ طريقه في مجال **Data Science**، ويربط بين النظري والعملي.  
